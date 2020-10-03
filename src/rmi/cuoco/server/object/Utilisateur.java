@@ -3,19 +3,19 @@ package rmi.cuoco.server.object;
 import java.io.Serializable;
 
 public class Utilisateur implements Serializable {
-    private String id;
+    private int id;
     private String nom;
 
-    public Utilisateur(String id, String nom) {
+    public Utilisateur(int id, String nom) {
         this.id = id;
         this.nom = nom;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 

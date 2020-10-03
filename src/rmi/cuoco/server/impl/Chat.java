@@ -6,11 +6,13 @@ import rmi.cuoco.server.object.Message;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
+import java.util.Random;
 
 public class Chat extends UnicastRemoteObject implements IChat {
     List<Message> messages;
+    int idClients = 0;
+
 
 
     public List<Message> getMessages() {
@@ -25,24 +27,32 @@ public class Chat extends UnicastRemoteObject implements IChat {
         this.messages = new ArrayList<>();
     }
 
+
     @Override
-    public void addMessage(Message message) {
+    public int firstConnexion() {
+        this.idClients++;
+        return this.idClients;
+    }
+
+    @Override
+    public synchronized void addMessage(Message message) {
         this.messages.add(message);
     }
 
     @Override
-    public List<Message> getChat() {
+    public synchronized List<Message> getChat() {
         return this.messages;
     }
 
     @Override
-    public void notifyUsers() throws RemoteException {
-            for (Enumeration e = messages.elements(); e.hasMoreElements();)
-            { TemperatureListener listener =
-                    (TemperatureListener) e.nextElement();
-                try {
-                    listener.temperatureChanged(temp);
-                } catch(RemoteException re) {
-                    System.out.println("removing listener -"+listener);
-                    list.remove(listener); } } }
+    public synchronized Message getMessage(int position) throws RemoteException {
+        if(messages.size() <= position || messages.isEmpty())
+        {
+            return null;
+        }
+        else return messages.get(position);
+
+    }
+
+
 }
