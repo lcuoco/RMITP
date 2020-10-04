@@ -1,5 +1,6 @@
 package rmi.cuoco.server.impl;
 
+import rmi.cuoco.server.inter.ICallbackListenner;
 import rmi.cuoco.server.inter.IChat;
 import rmi.cuoco.server.object.Message;
 
@@ -12,6 +13,7 @@ import java.util.Random;
 public class Chat extends UnicastRemoteObject implements IChat {
     List<Message> messages;
     int idClients = 0;
+    List<ICallbackListenner> iCallbackListenners = new ArrayList<>();
 
 
 
@@ -37,6 +39,20 @@ public class Chat extends UnicastRemoteObject implements IChat {
     @Override
     public synchronized void addMessage(Message message) {
         this.messages.add(message);
+        afficherAuxClients(message);
+
+    }
+
+    public synchronized void afficherAuxClients(Message message)
+    {
+        iCallbackListenners.forEach(cl ->
+        {
+            try {
+                cl.getMessage(message);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     @Override
@@ -52,6 +68,11 @@ public class Chat extends UnicastRemoteObject implements IChat {
         }
         else return messages.get(position);
 
+    }
+
+    @Override
+    public void register(ICallbackListenner callbackListenner) throws RemoteException {
+        this.iCallbackListenners.add(callbackListenner);
     }
 
 
